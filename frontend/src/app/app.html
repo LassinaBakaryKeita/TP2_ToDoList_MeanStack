@@ -1,0 +1,162 @@
+<div class="todo-app-container">
+  <!-- Titre principal -->
+  <header class="app-header">
+    <h1>Gestion des tâches</h1>
+  </header>
+
+  <!-- Messages d'alerte -->
+  @if (errorMessage) {
+    <div class="alert alert-danger" role="alert">
+      <span>{{ errorMessage }}</span>
+      <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Fermer">&times;</button>
+    </div>
+  }
+
+  @if (successMessage) {
+    <div class="alert alert-success" role="alert">
+      <span>{{ successMessage }}</span>
+      <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Fermer">&times;</button>
+    </div>
+  }
+
+  <!-- Formulaire d'ajout d'une tâche -->
+  <section class="task-form-section">
+    <form (ngSubmit)="addTask()" class="task-form">
+      <div class="form-group mb-3">
+        <input
+          type="text"
+          id="taskTitle"
+          class="form-control"
+          placeholder="Titre de la tâche"
+          [(ngModel)]="newTitle"
+          name="newTitle"
+          (input)="clearMessages()"
+          required
+        />
+      </div>
+
+      <div class="form-group mb-3">
+        <textarea
+          id="taskDescription"
+          class="form-control"
+          placeholder="Description de la tâche"
+          rows="3"
+          [(ngModel)]="newDescription"
+          name="newDescription"
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-add"
+        [disabled]="isSubmitting || !newTitle.trim()"
+      >
+        {{ isSubmitting ? 'Ajout en cours...' : 'Ajouter une tâche' }}
+      </button>
+    </form>
+  </section>
+
+  <!-- Indicateur de chargement -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <p>Chargement des tâches en cours...</p>
+    </div>
+  }
+
+  <!-- Liste des tâches -->
+  <section class="task-list-section">
+    @if (!isLoading && tasks.length === 0) {
+      <div class="empty-state">
+        <p>Aucune tâche disponible. Ajoutez-en une pour commencer !</p>
+      </div>
+    }
+
+    @for (task of tasks; track task._id || task.id) {
+      <div class="task-card" [class.is-completed]="task.completed">
+        
+        <!-- Mode Affichage Normal -->
+        @if (editingTaskId !== (task._id || task.id)) {
+          <div class="task-content">
+            <h3 class="task-title" [class.strikethrough]="task.completed">
+              {{ task.title }}
+            </h3>
+            @if (task.description) {
+              <p class="task-desc">
+                {{ task.description }}
+              </p>
+            }
+          </div>
+
+          <div class="task-actions">
+            <!-- Bouton Modifier -->
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              (click)="startEdit(task)"
+              title="Modifier le contenu de la tâche"
+            >
+              Modifier
+            </button>
+
+            <!-- Bouton Terminer / Reprendre -->
+            <button
+              type="button"
+              class="btn btn-success btn-sm btn-toggle"
+              (click)="toggleComplete(task)"
+            >
+              {{ task.completed ? 'Reprendre' : 'Terminer' }}
+            </button>
+
+            <!-- Bouton Supprimer -->
+            <button
+              type="button"
+              class="btn btn-danger btn-sm btn-delete"
+              (click)="deleteTask(task)"
+            >
+              Supprimer
+            </button>
+          </div>
+        }
+
+        <!-- Mode Édition en ligne -->
+        @if (editingTaskId === (task._id || task.id)) {
+          <div class="edit-mode-container w-100">
+            <div class="form-group mb-2">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="editTitle"
+                placeholder="Titre de la tâche"
+              />
+            </div>
+            <div class="form-group mb-2">
+              <textarea
+                class="form-control"
+                [(ngModel)]="editDescription"
+                rows="2"
+                placeholder="Description de la tâche"
+              ></textarea>
+            </div>
+            <div class="edit-actions">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="saveEdit(task)"
+              >
+                Enregistrer
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm ms-2"
+                (click)="cancelEdit()"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        }
+
+      </div>
+    }
+  </section>
+</div>

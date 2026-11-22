@@ -1,0 +1,28 @@
+{
+  "name": "backend-todolist",
+  "version": "1.0.0",
+  "description": "Backend API REST pour l'application To-Do List (MEAN Stack)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "mean",
+    "express",
+    "mongodb",
+    "nodejs",
+    "todo"
+  ],
+  "author": "ENSA Fes",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.8.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
